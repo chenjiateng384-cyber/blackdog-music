@@ -1,0 +1,66 @@
+plugins {
+    id 'com.android.application'
+    id 'dev.flutter.flutter-gradle-plugin'
+}
+
+def releaseProperties = new Properties()
+def releasePropertiesFile = rootProject.file('key.properties')
+if (releasePropertiesFile.exists()) {
+    releasePropertiesFile.withInputStream { releaseProperties.load(it) }
+}
+def localTestSigning = providers.gradleProperty('HARMONY_LOCAL_TEST_SIGNING').orNull == 'true'
+def releaseRequested = gradle.startParameter.taskNames.any { it.toLowerCase().contains('release') }
+if (releaseRequested && !localTestSigning && !releasePropertiesFile.exists()) {
+    throw new GradleException('Public release requires android/key.properties. See docs/RELEASING.md; use build-local-test only for local testing.')
+}
+
+android {
+    namespace = 'com.chenjiateng.my_music_library'
+    compileSdk = flutter.compileSdkVersion
+    ndkVersion = flutter.ndkVersion
+    sourceSets.main.java.srcDir '../tag-parser-core/src/main/kotlin'
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    defaultConfig {
+        applicationId = 'com.chenjiateng.my_music_library'
+        minSdk = flutter.minSdkVersion
+        targetSdk = flutter.targetSdkVersion
+        versionCode = flutter.versionCode
+        versionName = flutter.versionName
+    }
+
+    signingConfigs {
+        if (releasePropertiesFile.exists() && !localTestSigning) {
+            release {
+                storeFile = rootProject.file(releaseProperties['storeFile'])
+                storePassword = releaseProperties['storePassword']
+                keyAlias = releaseProperties['keyAlias']
+                keyPassword = releaseProperties['keyPassword']
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            if (localTestSigning) {
+                signingConfig = signingConfigs.debug
+            } else if (releasePropertiesFile.exists()) {
+                signingConfig = signingConfigs.release
+            }
+        }
+    }
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
+    }
+}
+
+flutter {
+    source = '../..'
+}

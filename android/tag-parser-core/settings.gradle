@@ -1,0 +1,24 @@
+pluginManagement {
+    resolutionStrategy {
+        eachPlugin {
+            if (requested.id.id == "org.jetbrains.kotlin.jvm") {
+                useModule("org.jetbrains.kotlin:kotlin-gradle-plugin:${requested.version}")
+            }
+        }
+    }
+    repositories {
+        maven { url = uri("https://maven.aliyun.com/repository/central") }
+        maven { url = uri("https://maven.aliyun.com/repository/gradle-plugin") }
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+dependencyResolutionManagement {
+    repositories {
+        maven { url = uri("https://maven.aliyun.com/repository/central") }
+        mavenCentral()
+    }
+}
+
+rootProject.name = "audio-tag-parser-core"

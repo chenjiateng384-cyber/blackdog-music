@@ -1,0 +1,60 @@
+# Flutter / Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/
+/dist/
+/.local-review/
+.gradle/
+coverage/
+
+# Local development tools (large, machine-specific)
+.tooling/
+
+# Android local configuration and signing material
+android/local.properties
+*.jks
+*.keystore
+key.properties
+
+# IDE and OS files
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
+
+# Generated local music or test artifacts
+test_music/
+test_artifacts/
+*.apk
+*.aab
+flutter_*.log
+*.log
+*.db
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
+*.harmonybackup
+*.restore-new
+*.restore-old
+*.mp3
+*.flac
+*.wav
+*.m4a
+*.aac
+*.ogg
+*.opus
+*.lrc
+*.pem
+*.p12
+.env
+.env.*
+!.env.example
+__pycache__/
+*.py[cod]
+.codex_manual_render/

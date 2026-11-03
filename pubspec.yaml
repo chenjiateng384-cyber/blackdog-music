@@ -1,0 +1,46 @@
+name: my_music_library
+description: 一个属于自己的本地音乐库。
+publish_to: none
+version: 0.4.6+12
+
+environment:
+  sdk: ^3.13.0
+
+dependencies:
+  audio_service: ^0.18.19
+  crypto: ^3.0.7
+  # 11.0.x has an upstream Android Kotlin registration regression.
+  file_picker: 10.3.10
+  flutter:
+    sdk: flutter
+  just_audio: 0.10.6
+  http: ^1.5.0
+  path: ^1.9.1
+  path_provider: ^2.1.6
+  permission_handler: 12.0.3
+  pinyin: ^3.3.0
+  shared_preferences: ^2.5.5
+  sqflite: 2.4.3
+  uuid: ^4.6.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  sqflite_common_ffi: ^2.4.2
+
+flutter:
+  # Required so Android packages the Material icon font. Without this all
+  # Icons.* widgets render as square placeholders on the phone.
+  uses-material-design: true
+  shaders:
+    - shaders/ink_sparkle.frag
+    - shaders/stretch_effect.frag
+# Database unit tests use the SQLite library provided by the host OS. Android
+# production builds continue to use sqflite's platform implementation.
+hooks:
+  user_defines:
+    sqlite3:
+      source: system
+      name: sqlite3
+      name_windows: winsqlite3

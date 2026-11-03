@@ -1,0 +1,24 @@
+{
+  "songs": [
+    {"lrc": "周杰伦/2001_范特西/安静.lrc", "language": "zh", "vad": false},
+    {"lrc": "周杰伦/2001_范特西/开不了口.lrc", "language": "zh", "vad": false},
+    {"lrc": "周杰伦/2000_Jay/黑色幽默.lrc", "language": "zh", "vad": false},
+    {"lrc": "周杰伦/2005_十一月的萧邦/枫.lrc", "language": "zh", "vad": false},
+    {"lrc": "邓紫棋/2012_Xposed/泡沫.lrc", "language": "zh", "vad": false},
+    {"lrc": "周杰伦/2004_七里香/搁浅.lrc", "language": "zh", "vad": false},
+    {"lrc": "周杰伦/2001_范特西/双截棍.lrc", "language": "zh", "vad": true},
+    {"lrc": "周杰伦/2001_范特西/忍者.lrc", "language": "zh", "vad": true},
+    {"lrc": "周杰伦/2003_叶惠美/以父之名.lrc", "language": "zh", "vad": true},
+    {"lrc": "周杰伦/2006_依然范特西/本草纲目.lrc", "language": "zh", "vad": true},
+    {"lrc": "周杰伦/2004_七里香/乱舞春秋.lrc", "language": "zh", "vad": true},
+    {"lrc": "英文歌/原版/Numb - Linkin Park.lrc", "language": "en", "vad": false},
+    {"lrc": "英文歌/原版/Love Story - Taylor Swift.lrc", "language": "en", "vad": false, "separate": true},
+    {"lrc": "英文歌/原版/Payphone - Maroon 5&Wiz Khalifa.lrc", "language": "en", "vad": true},
+    {"lrc": "周杰伦/演唱会Live/倒带(Live).lrc", "language": "zh", "vad": false},
+    {"lrc": "邓紫棋/EP与单曲/单曲/画(Live Piano Session II).lrc", "language": "zh", "vad": false},
+    {"lrc": "邓紫棋/演唱会Live/2011_Get Everybody Moving Concert(现场专辑)/忐忑(Live)(翻唱·龚琳娜).lrc", "language": "zh", "vad": false},
+    {"lrc": "周杰伦/2004_七里香/七里香.lrc", "language": "zh", "vad": false},
+    {"lrc": "周杰伦/2008_魔杰座/稻香.lrc", "language": "zh", "vad": true},
+    {"lrc": "周杰伦/2003_叶惠美/晴天.lrc", "language": "zh", "vad": false}
+  ]
+}
