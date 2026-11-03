@@ -1,6 +1,13 @@
-# Windows launcher regression tests. Uses a local fake SDK, never an Android device.
+﻿# Windows launcher regression tests. Uses a local fake SDK, never an Android device.
 $ErrorActionPreference = 'Stop'
 $launcherSource = Join-Path (Split-Path -Parent $PSScriptRoot) 'tool.ps1'
+# Windows PowerShell 5.1 uses the local ANSI code page for scripts without a BOM.
+foreach ($scriptPath in @($launcherSource, $PSCommandPath)) {
+  $scriptBytes = [IO.File]::ReadAllBytes($scriptPath)
+  if ($scriptBytes.Length -lt 3 -or [BitConverter]::ToString($scriptBytes[0..2]) -ne 'EF-BB-BF') {
+    throw "UTF-8 BOM required for Windows PowerShell 5.1: $scriptPath"
+  }
+}
 $testTempBase = [IO.Path]::GetFullPath([IO.Path]::GetTempPath())
 $testDirectory = Join-Path $testTempBase ('blackdog-launcher-' + [Guid]::NewGuid().ToString('N'))
 $testSdk = Join-Path $testDirectory '外部 SDK'

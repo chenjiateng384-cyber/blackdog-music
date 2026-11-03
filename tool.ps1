@@ -1,4 +1,4 @@
-param(
+﻿param(
   [Parameter(Mandatory = $true, Position = 0)]
   [ValidateSet('doctor', 'get', 'analyze', 'test', 'run', 'build-apk', 'build-release', 'build-local-test', 'devices')]
   [string]$Action,
