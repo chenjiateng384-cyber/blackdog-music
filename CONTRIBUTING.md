@@ -18,7 +18,7 @@ flutter test --no-pub
 python -m unittest discover -s tools/lyrics_alignment -p 'test_*.py'
 python -m unittest discover -s tools/harmony-music-intake -p 'test_*.py'
 # 在项目根目录，Windows 使用 android\gradlew.bat：
-sh android/gradlew -p android/tag-parser-core test --no-daemon
+bash android/gradlew -p android/tag-parser-core test --no-daemon
 flutter build apk --debug --no-pub
 ```
 

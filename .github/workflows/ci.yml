@@ -54,6 +54,6 @@ jobs:
       - name: Music intake utility tests
         run: python3 -m unittest discover -s tools/harmony-music-intake -p 'test_*.py'
       - name: Native metadata parser tests
-        run: sh android/gradlew -p android/tag-parser-core test --no-daemon
+        run: bash android/gradlew -p android/tag-parser-core test --no-daemon
       - name: Compile Android debug APK (not a public release)
         run: flutter build apk --debug --target-platform android-arm64 --no-pub
