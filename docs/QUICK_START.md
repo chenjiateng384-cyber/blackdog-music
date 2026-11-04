@@ -1,6 +1,10 @@
-# 第一次使用黑狗音乐
+# 第一次打造自己的音乐库与使用黑狗音乐
 
 面向想直接听歌的人，不需要先学习 Flutter、Git 或 AI 工具。
+
+这个项目把“获取音乐与版本 → 整理封面歌词 → 复制手机 → 用自己的 App 听歌与管理 → 备份”连在一起。手机 App、电脑上的文件库、可选 AI 整理任务各管一部分，不会自动联网同步。
+
+**还没有音乐文件？** 先看[音乐来源、下载与整包处理](LOCAL_MUSIC_COLLECTION_GUIDE.md#2-从哪里获取音乐)，其中列出了 WorkBuddy 保存的两个常用网站及实际核对状态。缺图、缺词可用[Agent 提示词](MUSIC_OPERATIONS.md#h-让-agent-查找并下载封面)；不知道先做什么，可复制[从空库开始的任务](MUSIC_OPERATIONS.md#j-从空库开始请-agent-带着做)。
 
 ## 先确认能不能安装
 
@@ -44,7 +48,7 @@ Android 11 起，系统对选择内部存储根目录、Download 根目录等位
 - **仅手动播放**：保留歌曲，但不让它进入这两套自动候选；不取消“我喜欢”，也不删除文件。
 - **两份备份**：`.harmonybackup` 保护 App 数据；音频、LRC 和图片另做文件备份。不要把备份放进公开 Issue。
 
-详细操作见[使用手册](Harmony-使用手册.md)。只有需要批量整理时，再看[收藏指南](LOCAL_MUSIC_COLLECTION_GUIDE.md)和[音乐后勤](MUSIC_OPERATIONS.md)；它们不是听第一首歌的前置要求。
+详细操作见[使用手册](Harmony-使用手册.md)。需要从获取音乐一步步搭库时，看[完整收藏指南](LOCAL_MUSIC_COLLECTION_GUIDE.md)；要让 AI 协助时看[音乐后勤与提示词](MUSIC_OPERATIONS.md)。它们按需要选读，不必学完所有工具才能听第一首歌。
 
 ## 反馈问题要给什么
 

@@ -1,5 +1,5 @@
 param(
-    [string]$MusicRoot = "D:\音乐文件",
+    [Parameter(Mandatory = $true)][string]$MusicRoot,
     [string]$Manifest = "tools\lyrics_alignment\pilot_manifest.json",
     [string]$OutputRoot = "artifacts\lyrics_alignment_pilot_output",
     [ValidateSet("cpu", "cuda")][string]$Device = "cpu"

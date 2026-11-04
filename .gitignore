@@ -30,6 +30,7 @@ Thumbs.db
 # Generated local music or test artifacts
 test_music/
 test_artifacts/
+/artifacts/
 *.apk
 *.aab
 flutter_*.log

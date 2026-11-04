@@ -4,7 +4,7 @@
 
 ## 安全边界
 
-- 不修改、移动或删除 `D:\音乐文件` 中的任何文件。
+- 不修改、移动或删除你通过 `MusicRoot` 指定的音乐目录中的任何文件。
 - 结果写入独立镜像目录。
 - 没有通过“歌词全文一致 + 时间单调”校验的结果标记为 `needs_review`。
 - 不会自动替换手机歌词；试听通过后再由用户决定复制哪些文件。
@@ -27,9 +27,11 @@ powershell -ExecutionPolicy Bypass -File tools\lyrics_alignment\bootstrap.ps1
 
 ## 先跑一首
 
+下列命令中的 `MUSIC_ROOT` 需要替换成你自己的音乐根目录；示例歌曲路径和 20 首清单也要按实际收藏修改。工具不附带这些歌曲或歌词。
+
 ```powershell
 .tooling\lyrics-alignment\.venv\Scripts\python.exe tools\lyrics_alignment\harmony_lyrics_tool.py align `
-  --music-root "D:\音乐文件" `
+  --music-root "MUSIC_ROOT" `
   --output-root "artifacts\lyrics_alignment_output" `
   --lyric-align ".tooling\lyrics-alignment\.venv\Scripts\lyric-align.exe" `
   --lrc "周杰伦\2001_范特西\安静.lrc" `
@@ -43,7 +45,7 @@ powershell -ExecutionPolicy Bypass -File tools\lyrics_alignment\bootstrap.ps1
 推荐使用按语言自动分流的首批脚本：中文使用 Xingyu CTC，英文使用 lyric-align。脚本支持中断后续跑，且只写入独立镜像目录：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File tools\lyrics_alignment\run_pilot.ps1
+powershell -ExecutionPolicy Bypass -File tools\lyrics_alignment\run_pilot.ps1 -MusicRoot "MUSIC_ROOT"
 ```
 
 统一报告位于 `artifacts\lyrics_alignment_pilot_output\pilot_report.json`。
@@ -51,7 +53,7 @@ powershell -ExecutionPolicy Bypass -File tools\lyrics_alignment\run_pilot.ps1
 旧的单一 lyric-align 批处理入口保留用于快速草稿：
 ```powershell
 .tooling\lyrics-alignment\.venv\Scripts\python.exe tools\lyrics_alignment\harmony_lyrics_tool.py batch `
-  --music-root "D:\音乐文件" `
+  --music-root "MUSIC_ROOT" `
   --output-root "artifacts\lyrics_alignment_output" `
   --lyric-align ".tooling\lyrics-alignment\.venv\Scripts\lyric-align.exe" `
   --manifest "tools\lyrics_alignment\pilot_manifest.json"
@@ -71,7 +73,7 @@ powershell -ExecutionPolicy Bypass -File tools\lyrics_alignment\bootstrap_xingyu
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File tools\lyrics_alignment\run_xingyu.ps1 `
-  -MusicRoot "D:\音乐文件" `
+  -MusicRoot "MUSIC_ROOT" `
   -RelativeLrc "周杰伦\2001_范特西\双截棍.lrc"
 ```
 
