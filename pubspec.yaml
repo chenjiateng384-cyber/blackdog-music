@@ -1,7 +1,7 @@
 name: my_music_library
 description: 一个属于自己的本地音乐库。
 publish_to: none
-version: 0.4.6+12
+version: 0.4.7+13
 
 environment:
   sdk: ^3.13.0

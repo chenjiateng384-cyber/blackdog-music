@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:my_music_library/controllers/app_controller.dart';
 import 'package:my_music_library/models/song.dart';
 import 'package:my_music_library/models/v4/library_track.dart';
@@ -248,6 +249,46 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('暂停恢复和暂停跳转后进度环同步且静止时不重复刷新', (tester) async {
+    final player = _MiniPositionPlayer();
+    final controller = _MiniPositionController(player)..currentSong = _song;
+    addTearDown(controller.dispose);
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          bottomNavigationBar: V4MiniPlayer(
+            controller: controller,
+            onTap: () {},
+          ),
+        ),
+      ),
+    );
+    CircularProgressIndicator ring() =>
+        tester.widget(find.byKey(const Key('v4-mini-player-progress-ring')));
+    expect(ring().value, 0);
+
+    player.restoredPosition = const Duration(seconds: 81);
+    await tester.pump(const Duration(milliseconds: 250));
+    await tester.pump();
+    expect(ring().value, closeTo(81 / _song.duration.inSeconds, .001));
+    expect(controller.isPlaying, isFalse);
+
+    player.restoredPosition = const Duration(seconds: 25);
+    await tester.pump(const Duration(milliseconds: 250));
+    await tester.pump();
+    expect(ring().value, closeTo(25 / _song.duration.inSeconds, .001));
+    player.restoredDuration = const Duration(seconds: 200);
+    await tester.pump(const Duration(milliseconds: 250));
+    await tester.pump();
+    expect(ring().value, closeTo(25 / 200, .001));
+    final unchangedRing = ring();
+    await tester.pump(const Duration(seconds: 2));
+    await tester.pump();
+    expect(identical(ring(), unchangedRing), isTrue);
+    await tester.pumpWidget(const SizedBox.shrink());
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('Mini Player只保留必要信息和控制', (tester) async {
     final controller = AppController();
     controller.currentSong = _song;
@@ -400,6 +441,32 @@ void main() {
     expect(find.byIcon(Icons.drag_handle_rounded), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
+}
+
+class _MiniPositionController extends AppController {
+  _MiniPositionController(this.positionPlayer);
+
+  final AudioPlayer positionPlayer;
+
+  @override
+  AudioPlayer get player => positionPlayer;
+}
+
+class _MiniPositionPlayer implements AudioPlayer {
+  Duration restoredPosition = Duration.zero;
+  Duration restoredDuration = _song.duration;
+
+  @override
+  Duration get position => restoredPosition;
+
+  @override
+  Duration? get duration => restoredDuration;
+
+  @override
+  bool get playing => false;
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 class _MiniPlaybackController extends AppController {

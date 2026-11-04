@@ -8,6 +8,7 @@ import 'package:my_music_library/data/playlist_repository.dart';
 import 'package:my_music_library/services/backup_platform.dart';
 import 'package:my_music_library/services/harmony_backup_service.dart';
 import 'package:my_music_library/services/library_database.dart';
+import 'package:path/path.dart' as p;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
@@ -117,6 +118,134 @@ void main() {
     final restoredPath = artwork['cache_path'] as String;
     expect(restoredPath, startsWith(supportDirectory.path));
     expect(File(restoredPath).existsSync(), isTrue);
+  });
+
+  test('原私有数据消失后可恢复到全新数据库与资源目录', () async {
+    final seeded = await _seed(database, temp);
+    final db = await database.database;
+    await PlaylistRepository(database).setManualOnly(seeded.trackId, true);
+    await db.insert('play_events', {
+      'event_id': '00000000-0000-4000-8000-000000000205',
+      'track_id': seeded.trackId,
+      'started_at': 1000,
+      'ended_at': 4000,
+      'listened_duration_ms': 3000,
+      'context_type': 'playlist',
+    });
+    await db.insert('track_stats', {
+      'track_id': seeded.trackId,
+      'play_count': 1,
+      'total_play_duration_ms': 3000,
+      'updated_at': 4000,
+    });
+    await db.insert('track_overrides', {
+      'track_id': seeded.trackId,
+      'title': '人工修正标题',
+      'updated_at': 4000,
+    });
+    final lyricFile = File('${temp.path}/original.lrc');
+    const lyricText = '[00:01.000]独立恢复歌词';
+    await lyricFile.writeAsString(lyricText);
+    await db.insert('lyrics', {
+      'lyrics_id': '00000000-0000-4000-8000-000000000206',
+      'track_id': seeded.trackId,
+      'source': 'manual',
+      'match_method': 'manual',
+      'document_uri': lyricFile.uri.toString(),
+      'offset_ms': 125,
+      'is_selected': 1,
+      'created_at': 1,
+    });
+    final oldPrefs = await SharedPreferences.getInstance();
+    await oldPrefs.setString('harmony.listening_preference.v1', 'quiet');
+    await oldPrefs.setString(
+      'harmony.home_smart_play_pool.v1',
+      'temporary-pool',
+    );
+    await service.exportBackup();
+    await database.close();
+    await File('${temp.path}/current.db').delete();
+    await File('${temp.path}/manual.jpg').delete();
+    await lyricFile.delete();
+    SharedPreferences.setMockInitialValues({});
+
+    final freshDirectory = Directory('${temp.path}/fresh')..createSync();
+    final freshSupport = Directory('${freshDirectory.path}/support')
+      ..createSync();
+    final freshDatabase = LibraryDatabase(
+      factory: databaseFactoryFfi,
+      databasePath: '${freshDirectory.path}/library.db',
+    );
+    try {
+      final freshService = HarmonyBackupService(
+        database: freshDatabase,
+        gateway: gateway,
+        temporaryDirectory: () async => freshDirectory,
+        supportDirectory: () async => freshSupport,
+      );
+      expect(await freshService.lastSuccessfulBackupAt(), isNull);
+      await freshService.restoreBackup();
+      final restored = await freshDatabase.database;
+      expect(
+        (await restored.query('tracks')).single['track_id'],
+        seeded.trackId,
+      );
+      final preference = (await restored.query('track_preferences')).single;
+      expect(preference['liked'], 1);
+      expect(preference['recommendation_excluded'], 1);
+      expect(await restored.query('playlist_tracks'), hasLength(2));
+      final userPlaylist = (await restored.query(
+        'playlists',
+        where: 'type = ?',
+        whereArgs: ['user'],
+      )).single;
+      expect(userPlaylist['name'], '夜晚');
+      final ordered = (await restored.query(
+        'playlist_tracks',
+        where: 'playlist_id = ?',
+        whereArgs: [userPlaylist['playlist_id']],
+      )).single;
+      expect(ordered['position'], 4);
+      expect(
+        (await restored.query('play_events')).single['context_type'],
+        'playlist',
+      );
+      expect(
+        (await restored.query('track_stats')).single['total_play_duration_ms'],
+        3000,
+      );
+      expect(
+        (await restored.query('track_overrides')).single['title'],
+        '人工修正标题',
+      );
+      final cover = (await restored.query('artwork_assets')).single;
+      expect(cover['cache_path'], startsWith(freshSupport.path));
+      expect(await File(cover['cache_path'] as String).readAsBytes(), [
+        1,
+        2,
+        3,
+        4,
+      ]);
+      final lyric = (await restored.query('lyrics')).single;
+      final restoredLyric = File.fromUri(
+        Uri.parse(lyric['document_uri'] as String),
+      );
+      expect(p.isWithin(freshSupport.path, restoredLyric.path), isTrue);
+      expect(await restoredLyric.readAsString(), lyricText);
+      expect(lyric['offset_ms'], 125);
+      final preferences = await SharedPreferences.getInstance();
+      expect(preferences.getString('harmony.listening_preference.v1'), 'quiet');
+      expect(
+        preferences.containsKey('harmony.home_smart_play_pool.v1'),
+        isFalse,
+      );
+      expect(await restored.rawQuery('PRAGMA integrity_check'), [
+        {'integrity_check': 'ok'},
+      ]);
+      expect(await restored.rawQuery('PRAGMA foreign_key_check'), isEmpty);
+    } finally {
+      await freshDatabase.close();
+    }
   });
 
   test('校验失败时拒绝恢复且当前数据库不被覆盖', () async {

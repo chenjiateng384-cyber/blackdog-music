@@ -34,6 +34,8 @@ class _V4MiniPlayerState extends State<V4MiniPlayer> {
   String? _prefetchedAroundTrackId;
   late final StreamController<Duration> _positionController;
   Timer? _positionTicker;
+  Duration? _lastPosition;
+  Duration? _lastDuration;
   double _dragX = 0;
   bool _dragging = false;
   bool _animating = false;
@@ -48,9 +50,15 @@ class _V4MiniPlayerState extends State<V4MiniPlayer> {
     // keeps the progress ring and lyrics responsive without continuously
     // rebuilding two Mini Player subtrees.
     _positionTicker = Timer.periodic(const Duration(milliseconds: 250), (_) {
-      if (widget.controller.player.playing && !_positionController.isClosed) {
-        _positionController.add(widget.controller.player.position);
-      }
+      if (_positionController.isClosed) return;
+      final position = widget.controller.player.position;
+      final duration =
+          widget.controller.player.duration ??
+          widget.controller.currentSong?.duration;
+      if (position == _lastPosition && duration == _lastDuration) return;
+      _lastPosition = position;
+      _lastDuration = duration;
+      _positionController.add(position);
     });
   }
 

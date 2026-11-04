@@ -2,7 +2,7 @@
 
 黑狗音乐是面向个人长期使用的 Android 本地音乐播放器：保留真实目录，读取本地 Metadata、封面和 LRC，并在本机保存喜欢、歌单、播放历史和个性化播放数据。
 
-当前为 **0.4.6 测试候选版**，不是已经完成全机型验收的正式版。主代码 MIT；第三方代码、图标和截图素材见 [第三方声明](THIRD_PARTY_NOTICES.md)。
+当前为 **0.4.7 测试候选版**，不是已经完成全机型验收的正式版。主代码 MIT；第三方代码、图标和截图素材见 [第三方声明](THIRD_PARTY_NOTICES.md)。
 
 发布准备：已在所有者账号创建私有仓库 `chenjiateng384-cyber/blackdog-music`，用于源码和线上检查；尚未公开，也没有正式 Release。首发选集不含旧设计图、私人复盘、Word 原件、音乐或用户数据库，原件在维护者本地保留。
 
@@ -76,7 +76,7 @@ Windows 中文路径可用项目脚本；脚本优先识别 `FLUTTER_ROOT`，其
 .\tool.ps1 build-local-test
 ```
 
-脚本支持透传参数，例如 `./tool.ps1 run -d 设备ID`、`./tool.ps1 build-local-test --build-number=12`。当前源码基号为 12；此工具链的分架构构建给 ARM64 加 2000，因此预期 APK 更新编号为 2012，较早测试包为 2011。最终以实际验包为准；未拆分 APK 的编号不能直接按此规则推断。
+脚本支持透传参数，例如 `./tool.ps1 run -d 设备ID`、`./tool.ps1 build-local-test --build-number=13`。当前源码基号为 13；此工具链的分架构构建给 ARM64 加 2000，因此预期 APK 更新编号为 2013，上一轮测试包为 2012。最终以实际验包为准；未拆分 APK 的编号不能直接按此规则推断。
 
 脚本不强制更换下载源；默认沿用 Flutter/Dart 设置，显式配置的 `PUB_HOSTED_URL` 和 `FLUTTER_STORAGE_BASE_URL` 会保留。若网络需要镜像，先确认来源再自行配置，不必为此改业务代码。
 

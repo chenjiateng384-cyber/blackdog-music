@@ -103,7 +103,7 @@ class BackupBridge(
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
             type = "*/*"
-            putExtra(Intent.EXTRA_MIME_TYPES, arrayOf(MIME_TYPE, "application/zip"))
+            putExtra(Intent.EXTRA_MIME_TYPES, arrayOf(MIME_TYPE, "application/octet-stream", "application/zip"))
         }
         activity.startActivityForResult(intent, IMPORT_REQUEST)
     }
@@ -190,7 +190,7 @@ class BackupBridge(
 
     companion object {
         private const val CHANNEL = "my_music_library/backup"
-        private const val MIME_TYPE = "application/octet-stream"
+        private const val MIME_TYPE = "application/x-harmonybackup"
         private const val EXPORT_REQUEST = 7391
         private const val IMPORT_REQUEST = 7392
         private const val MAX_ENTRIES = 4096
