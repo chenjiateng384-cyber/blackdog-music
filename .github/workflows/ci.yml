@@ -55,5 +55,20 @@ jobs:
         run: python3 -m unittest discover -s tools/harmony-music-intake -p 'test_*.py'
       - name: Native metadata parser tests
         run: bash android/gradlew -p android/tag-parser-core test --no-daemon
+      - name: Prepare matching Android NDK (retry transient downloads)
+        shell: bash
+        run: |
+          for attempt in 1 2 3; do
+            if "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install 'ndk;28.2.13676358'; then
+              break
+            fi
+            if [ "$attempt" -eq 3 ]; then
+              echo "Android NDK installation failed after 3 attempts."
+              exit 1
+            fi
+            echo "Retrying the Android NDK download in 10 seconds."
+            sleep 10
+          done
+          test -f "$ANDROID_HOME/ndk/28.2.13676358/source.properties"
       - name: Compile Android debug APK (not a public release)
         run: flutter build apk --debug --target-platform android-arm64 --no-pub
