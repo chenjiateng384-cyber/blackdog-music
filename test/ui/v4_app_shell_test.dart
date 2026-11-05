@@ -140,6 +140,50 @@ void main() {
     expect(scanRootTile.onTap, isNotNull);
   });
 
+  testWidgets('音乐库搜索关闭后保留原标签与页面状态', (tester) async {
+    tester.view.physicalSize = const Size(412, 915);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(
+      const MyMusicLibraryApp(initializeController: false),
+    );
+    await tester.pump();
+    await tester.tap(find.text('音乐库').last);
+    await tester.pump(const Duration(milliseconds: 500));
+    final libraryState = tester.state(find.byType(V4LibraryPage));
+
+    for (final useSystemBack in [true, false]) {
+      await tester.tap(find.text('文件夹'));
+      await tester.pump(const Duration(milliseconds: 500));
+      final libraryContext = tester.element(find.byType(TabBar));
+      expect(DefaultTabController.of(libraryContext).index, 3);
+
+      await tester.tap(find.byKey(const Key('library-search-shortcut')));
+      await tester.pump(const Duration(milliseconds: 500));
+      expect(find.byKey(const Key('v4-search-page')), findsOneWidget);
+      expect(find.byKey(const Key('v4-library-page')), findsNothing);
+      if (useSystemBack) {
+        await tester.binding.handlePopRoute();
+      } else {
+        await tester.tap(find.byKey(const Key('search-back')));
+      }
+      await tester.pump(const Duration(milliseconds: 500));
+
+      expect(tester.state(find.byType(V4LibraryPage)), same(libraryState));
+      expect(
+        DefaultTabController.of(tester.element(find.byType(TabBar))).index,
+        3,
+      );
+      expect(
+        tester.widget<NavigationBar>(find.byType(NavigationBar)).selectedIndex,
+        1,
+      );
+      expect(tester.takeException(), isNull);
+    }
+  });
+
   testWidgets('Android 返回键从非首页主标签先回到首页', (tester) async {
     tester.view.physicalSize = const Size(412, 915);
     tester.view.devicePixelRatio = 1;

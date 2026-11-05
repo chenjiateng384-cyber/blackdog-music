@@ -157,14 +157,28 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
                 const Positioned.fill(child: _AppBackground()),
                 SafeArea(
                   bottom: false,
-                  child: searchOpen
-                      ? V4SearchPage(
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      TickerMode(
+                        enabled: !searchOpen,
+                        child: Offstage(
+                          offstage: searchOpen,
+                          child: IndexedStack(
+                            index: currentIndex,
+                            children: pages,
+                          ),
+                        ),
+                      ),
+                      if (searchOpen)
+                        V4SearchPage(
                           controller: controller,
                           active: true,
                           onClose: () => setState(() => searchOpen = false),
                           onOpenPlayer: _openPlayer,
-                        )
-                      : IndexedStack(index: currentIndex, children: pages),
+                        ),
+                    ],
+                  ),
                 ),
                 Positioned(
                   top: MediaQuery.paddingOf(context).top + V4Space.sm,
